@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: My Friend
+
+  data:
+    mongodb:
+      uri: mongodb+srv://gangwarrishab01:aditya@adicluster.kfhbabk.mongodb.net/?retryWrites=true&w=majority&appName=adiCluster
+      database: myfriend
+      auto-index-creation: true
