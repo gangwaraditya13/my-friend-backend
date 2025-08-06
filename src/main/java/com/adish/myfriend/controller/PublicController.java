@@ -15,12 +15,15 @@ public class PublicController {
 
     @PostMapping("/create")
     public ResponseEntity<User> sighUp(@RequestBody User user){
-        boolean check = userService.saveNewUser(user);
-        if(check){
+        try {
+            boolean check = userService.saveNewUser(user);
+            if(check){
             return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }else{
+                return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            }
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

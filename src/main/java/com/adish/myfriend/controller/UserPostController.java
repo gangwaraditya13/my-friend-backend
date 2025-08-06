@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,5 +32,17 @@ public class UserPostController {
         String userName = authentication.getName();
         userPostService.updatePost(userPost,userName,myId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/Delete-post/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable ObjectId postId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        boolean check = userPostService.deletePostById(postId, userName);
+        if(check){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

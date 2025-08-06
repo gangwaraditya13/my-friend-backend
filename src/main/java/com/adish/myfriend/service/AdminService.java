@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,11 +28,13 @@ public class AdminService {
     }
 
     @Transactional
-    public boolean updateUserRoll(String userName){
+    public boolean updateUserRoll(String userName, String roll){
         User checkUser = userRepository.findByUserName(userName);
         try{
             if (checkUser.getUserName().equals(userName)) {
-                    checkUser.setRoll(Arrays.asList("USER", "ADMIN"));
+                List<String> collect = checkUser.getRoll().stream().filter(x -> x.equals(roll)).collect(Collectors.toList());
+                if(collect.isEmpty())
+                    checkUser.getRoll().add(roll);
                     userRepository.save(checkUser);
                     return true;
             }

@@ -19,15 +19,15 @@ public class AdminController{
     @GetMapping("/all-users")
     public ResponseEntity<?> getAllUser(){
         List<User> allUser = adminService.getAllUser();
-        if(!allUser.isEmpty() && allUser==null){
+        if(!allUser.isEmpty() && allUser!=null){
             return new ResponseEntity<>(allUser, HttpStatus.FOUND);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/m-admin/{userName}")//make admin
-    public ResponseEntity<User> updateUser(@RequestBody String userName) {
-        boolean check = adminService.updateUserRoll(userName);
+    @PutMapping("/m-admin")//make admin
+    public ResponseEntity<User> updateUser(@RequestBody String userName,@RequestBody String roll) {
+        boolean check = adminService.updateUserRoll(userName,roll);
         if (check) {
             return new ResponseEntity<>(HttpStatus.FOUND);
         }

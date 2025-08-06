@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class MyFriendApplication {
@@ -17,5 +18,10 @@ public class MyFriendApplication {
 	@Bean
 	public PlatformTransactionManager PTM(MongoDatabaseFactory factoryDB){
 		return new MongoTransactionManager(factoryDB);
+	}
+
+	@Bean
+	public RestTemplate restTemplate(){
+		return new RestTemplate();
 	}
 }

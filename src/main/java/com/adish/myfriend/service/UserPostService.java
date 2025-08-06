@@ -4,6 +4,7 @@ import com.adish.myfriend.entities.User;
 import com.adish.myfriend.entities.UserPost;
 import com.adish.myfriend.repository.UserPostRepository;
 import com.adish.myfriend.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UserPostService {
 
@@ -23,12 +25,18 @@ public class UserPostService {
     @Autowired
     private UserPostRepository userPostRepository;
 
-    //first complite user
     @Transactional
     public void saveNewPost(UserPost userPost, String userName){
-        User byUserName = userRepository.findByUserName(userName);
-        userPost.setDate(LocalDateTime.now());
-        userPostRepository.save(userPost);
+        try {
+            User user = userRepository.findByUserName(userName);
+            userPost.setDate(LocalDateTime.now());
+            UserPost saved = userPostRepository.save(userPost);
+            user.getUserPostsList().add(saved);
+            userRepository.save(user);
+        } catch (Exception e) {
+            log.error("Exception in user post service on {}",LocalDateTime.now(),e);
+            throw new RuntimeException(e);
+        }
     }
 
     public void updatePost(UserPost userPost, String userName, ObjectId userPostId){
@@ -58,4 +66,20 @@ public class UserPostService {
             }
     }
 
+    @Transactional
+    public boolean deletePostById(ObjectId postId, String userName) {
+        boolean removed = false;
+        User user = userRepository.findByUserName(userName);
+
+        try {
+            removed = user.getUserPostsList().removeIf(x -> x.getId().equals(postId));
+            if (removed) {
+                userRepository.save(user);
+                userPostRepository.deleteById(postId);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return removed;
+    }
 }

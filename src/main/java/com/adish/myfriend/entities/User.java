@@ -15,7 +15,6 @@ import java.util.List;
 @Data
 public class User {
     @Id
-    @NonNull
     private ObjectId id;
     @Indexed(unique = true)
     @NonNull
