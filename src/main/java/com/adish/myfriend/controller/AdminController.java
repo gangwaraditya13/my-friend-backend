@@ -25,9 +25,9 @@ public class AdminController{
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/m-admin")//make admin
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
-        boolean check = adminService.updateUserRoll(user);
+    @PutMapping("/m-admin/{userName}")//make admin
+    public ResponseEntity<User> updateUser(@RequestBody String userName) {
+        boolean check = adminService.updateUserRoll(userName);
         if (check) {
             return new ResponseEntity<>(HttpStatus.FOUND);
         }

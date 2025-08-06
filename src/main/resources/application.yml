@@ -7,3 +7,7 @@ spring:
       uri: mongodb+srv://gangwarrishab01:aditya@adicluster.kfhbabk.mongodb.net/?retryWrites=true&w=majority&appName=adiCluster
       database: myfriend
       auto-index-creation: true
+
+
+  main:
+    allow-circular-references: true

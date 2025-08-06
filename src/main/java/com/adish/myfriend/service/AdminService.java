@@ -27,12 +27,12 @@ public class AdminService {
     }
 
     @Transactional
-    public boolean updateUserRoll(User user){
-        User checkUser = userRepository.findByUserName(user.getUserName());
+    public boolean updateUserRoll(String userName){
+        User checkUser = userRepository.findByUserName(userName);
         try{
-            if (checkUser.getUserName().equals(user.getUserName())) {
-                    user.setRoll(Arrays.asList("USER", "ADMIN"));
-                    userRepository.save(user);
+            if (checkUser.getUserName().equals(userName)) {
+                    checkUser.setRoll(Arrays.asList("USER", "ADMIN"));
+                    userRepository.save(checkUser);
                     return true;
             }
             else{
