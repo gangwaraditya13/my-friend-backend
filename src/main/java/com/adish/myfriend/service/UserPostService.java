@@ -82,4 +82,10 @@ public class UserPostService {
         }
         return removed;
     }
+
+    public List<UserPost> getAllUserPost(String userName) {
+        User user = userRepository.findByUserName(userName);
+        List<UserPost> userAllPostsList = user.getUserPostsList();
+        return userAllPostsList;
+    }
 }

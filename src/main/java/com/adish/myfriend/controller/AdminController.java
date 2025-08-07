@@ -1,5 +1,6 @@
 package com.adish.myfriend.controller;
 
+import com.adish.myfriend.Component.AdminRequest;
 import com.adish.myfriend.entities.User;
 import com.adish.myfriend.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,19 @@ public class AdminController{
     }
 
     @PutMapping("/m-admin")//make admin
-    public ResponseEntity<User> updateUser(@RequestBody String userName,@RequestBody String roll) {
-        boolean check = adminService.updateUserRoll(userName,roll);
+    public ResponseEntity<User> updateUser(@RequestBody AdminRequest adminRequest) {
+        boolean check = adminService.updateUserRoll(adminRequest.getUserName(),adminRequest.getRoll());
         if (check) {
             return new ResponseEntity<>(HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping("/remove-auth")
+    public ResponseEntity<?> removeAuth(@RequestBody AdminRequest adminRequest){
+        boolean check = adminService.removeRoll(adminRequest.getUserName(),adminRequest.getRoll());
+        if(check){
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

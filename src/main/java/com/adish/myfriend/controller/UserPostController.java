@@ -12,13 +12,26 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/user-post")
 public class UserPostController {
     @Autowired
     private UserPostService userPostService;
 
-    @GetMapping
+    @GetMapping("/get-user-post")
+    public ResponseEntity<?> getPost(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        List<UserPost> allUserPost = userPostService.getAllUserPost(userName);
+        if(!allUserPost.isEmpty()){
+            return new ResponseEntity<>(allUserPost,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping
     public ResponseEntity<?> newPost(@RequestBody UserPost userPost){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
@@ -34,7 +47,7 @@ public class UserPostController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/Delete-post/{postId}")
+    @DeleteMapping("/delete-post/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable ObjectId postId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();

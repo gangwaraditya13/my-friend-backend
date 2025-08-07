@@ -46,4 +46,21 @@ public class AdminService {
             return false;
         }
     }
+
+    public boolean removeRoll(String userName, String roll) {
+        User checkUser = userRepository.findByUserName(userName);
+        boolean remove = false;
+        try{
+            if (checkUser.getUserName().equals(userName)) {
+                remove = checkUser.getRoll().removeIf(x -> x.equals(roll));
+                if(remove) {
+                    userRepository.save(checkUser);
+                }
+            }
+            return remove;
+        } catch (Exception e) {
+            log.error("Exception in Admin Service {}", LocalDateTime.now(),e);
+            return false;
+        }
+    }
 }
