@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/user-post")
@@ -20,8 +21,8 @@ public class UserPostController {
     @Autowired
     private UserPostService userPostService;
 
-    @GetMapping("/get-user-post")
-    public ResponseEntity<?> getPost(){
+    @GetMapping("/get-user-posts")
+    public ResponseEntity<?> getAllPost(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         List<UserPost> allUserPost = userPostService.getAllUserPost(userName);
@@ -31,12 +32,28 @@ public class UserPostController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/get-user-post/{myId}")
+    public ResponseEntity<?> getPost(@PathVariable ObjectId myId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        Optional<UserPost> userPost = userPostService.getUserPost(userName, myId);
+        if(userPost.isPresent()){
+            return new ResponseEntity<>(userPost,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
     @PostMapping
     public ResponseEntity<?> newPost(@RequestBody UserPost userPost){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
-        userPostService.saveNewPost(userPost,userName);
-        return new ResponseEntity<>(HttpStatus.OK);
+        boolean check = userPostService.saveNewPost(userPost, userName);
+        if(check) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/update/{myId}")

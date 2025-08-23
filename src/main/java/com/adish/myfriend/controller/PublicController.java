@@ -13,6 +13,16 @@ public class PublicController {
     @Autowired
     private UserService userService;
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User user){
+        boolean checkUser = userService.checkuser(user.getUserName(), user.getPassword());
+        if(checkUser){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
     @PostMapping("/create")
     public ResponseEntity<User> sighUp(@RequestBody User user){
         try {

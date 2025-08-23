@@ -1,5 +1,6 @@
 package com.adish.myfriend.controller;
 
+import com.adish.myfriend.Component.*;
 import com.adish.myfriend.entities.User;
 import com.adish.myfriend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,24 +15,62 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private UserService userService;
-
-    @PutMapping("/update-user")
-    public ResponseEntity<?> updateUser(@RequestBody User user){
+    @GetMapping("/user-info")
+    public ResponseEntity<?> getUserInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
-        userService.updateUser(user,userName);
-        return new ResponseEntity<>(HttpStatus.OK);
+        responceUser info = userService.getInfo(userName);
+        if(info == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(info,HttpStatus.OK);
+    }
+
+    @PutMapping("/update-password")
+    public ResponseEntity<?> updateUserPassword(@RequestBody PasswordReset passwordReset){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        boolean check = userService.updatePassword(passwordReset, userName);
+        if(check){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/update-photo")
+    public ResponseEntity<?> updateUserPhotoURL(@RequestBody NewPhotoURL newPhotoURL){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        boolean check = userService.updatePhotoURL(newPhotoURL, userName);
+        if(check){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/update-user")
+    public ResponseEntity<?> updateUser(@RequestBody UpdateGmailOrUserName user){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        boolean check = userService.updateUser(user, userName);
+        if(check){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/delete-user")
-    public ResponseEntity<?> deleteUser(@RequestBody String password){
+    public ResponseEntity<?> deleteUser(@RequestBody PasswordRequest passwordRequest){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
-        boolean check = userService.deleteUser(password, userName);
+        boolean check = userService.deleteUser(passwordRequest.getPassword(), userName);
         if(check){
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }

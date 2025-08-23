@@ -1,5 +1,8 @@
 package com.adish.myfriend.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.NonNull;
 import org.bson.types.ObjectId;
@@ -15,6 +18,8 @@ import java.util.List;
 @Data
 public class User {
     @Id
+    @JsonProperty("_id") // Serialize field as "_id" in JSON (optional, common with MongoDB)
+    @JsonSerialize(using = ToStringSerializer.class) // Serialize ObjectId as hex string
     private ObjectId id;
     @Indexed(unique = true)
     @NonNull
@@ -22,6 +27,7 @@ public class User {
     @NonNull
     private String password;
     private String profilePhotoURL;
+    private String gmailId;
     @DBRef
     private List<UserPost> userPostsList = new ArrayList<>();
     private List<String> roll;

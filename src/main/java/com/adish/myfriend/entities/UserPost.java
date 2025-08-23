@@ -1,5 +1,8 @@
 package com.adish.myfriend.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -14,11 +17,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserPost {
     @Id
+    @JsonProperty("_id") // Serialize field as "_id" in JSON (optional, common with MongoDB)
+    @JsonSerialize(using = ToStringSerializer.class) // Serialize ObjectId as hex string
     private ObjectId id;
     @NonNull
     private String title;
     private String content;
     private String photoURL;
-    private LocalDateTime date;
+    private String date;
 
 }

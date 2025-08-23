@@ -26,13 +26,23 @@ public class UserPostService {
     private UserPostRepository userPostRepository;
 
     @Transactional
-    public void saveNewPost(UserPost userPost, String userName){
+    public boolean saveNewPost(UserPost userPost, String userName){
+        boolean checkSave = false;
         try {
             User user = userRepository.findByUserName(userName);
-            userPost.setDate(LocalDateTime.now());
-            UserPost saved = userPostRepository.save(userPost);
-            user.getUserPostsList().add(saved);
-            userRepository.save(user);
+            if(userPost.getDate().isEmpty()){
+                userPost.setDate(LocalDateTime.now().toString());
+            }
+            if((userPost.getTitle() != null) && !userPost.getTitle().isEmpty()) {
+                UserPost saved = userPostRepository.save(userPost);
+                user.getUserPostsList().add(saved);
+                userRepository.save(user);
+                checkSave = true;
+            }
+            else{
+                log.error("title is empty in body");
+            }
+            return checkSave;
         } catch (Exception e) {
             log.error("Exception in user post service on {}",LocalDateTime.now(),e);
             throw new RuntimeException(e);
@@ -87,5 +97,11 @@ public class UserPostService {
         User user = userRepository.findByUserName(userName);
         List<UserPost> userAllPostsList = user.getUserPostsList();
         return userAllPostsList;
+    }
+
+    public Optional<UserPost> getUserPost(String userName, ObjectId postId) {
+        User user = userRepository.findByUserName(userName);
+        Optional<UserPost> userPost = userPostRepository.findById(postId);
+        return userPost;
     }
 }

@@ -1,5 +1,9 @@
 package com.adish.myfriend.service;
 
+import com.adish.myfriend.Component.NewPhotoURL;
+import com.adish.myfriend.Component.PasswordReset;
+import com.adish.myfriend.Component.UpdateGmailOrUserName;
+import com.adish.myfriend.Component.responceUser;
 import com.adish.myfriend.entities.User;
 import com.adish.myfriend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 
@@ -18,7 +23,8 @@ public class UserService {
     private UserRepository userRepository;
 
     private static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
-    
+
+    @Transactional
     public boolean saveNewUser(User newUser){
         try {
             newUser.setPassword(PASSWORD_ENCODER.encode(newUser.getPassword()));
@@ -40,26 +46,78 @@ public class UserService {
         return false;
     }
 
-    public void updateUser(User user,String userName){
+    public boolean updatePassword(PasswordReset passwordReset, String userName){
         User existingUser = userRepository.findByUserName(userName);
-        String existingPassword = PASSWORD_ENCODER.encode(existingUser.getPassword());
+        boolean existingPassword = PASSWORD_ENCODER.matches(passwordReset.getOldPassword(),existingUser.getPassword());
+        String encodeNewPassword = PASSWORD_ENCODER.encode(passwordReset.getNewPassword());
+        if(existingPassword){
+            existingUser.setPassword(encodeNewPassword);
+            userRepository.save(existingUser);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean updatePhotoURL(NewPhotoURL newPhotoURL, String userName){
+        User existingUser = userRepository.findByUserName(userName);
+        if(newPhotoURL.getOldPhoto().isEmpty() || newPhotoURL.getOldPhoto() == null || !existingUser.getProfilePhotoURL().equals(newPhotoURL.getNewPhoto()) ){
+            existingUser.setProfilePhotoURL(newPhotoURL.getNewPhoto());
+            userRepository.save(existingUser);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean updateUser(UpdateGmailOrUserName user, String userName) {
+        User existingUser = userRepository.findByUserName(userName);
+        if(existingUser.getGmailId() == null || !existingUser.getGmailId().equals(user.getGmailId())){
+            existingUser.setGmailId(user.getGmailId());
+            userRepository.save(existingUser);
+            return true;
+        }
         if(!existingUser.getUserName().equals(user.getUserName())){
-            existingUser.setUserName(user.getUserName());
+            User checkUser = userRepository.findByUserName(user.getUserName());
+            if(checkUser == null){
+                existingUser.setUserName(user.getUserName());
+                userRepository.save(existingUser);
+                return true;
+            }
         }
-        if(!existingPassword.equals(user.getPassword())){
-            existingUser.setPassword(PASSWORD_ENCODER.encode(user.getPassword()));
-        }
-        userRepository.save(existingUser);
+        return false;
     }
 
     public boolean deleteUser(String password, String userName){
-        password = PASSWORD_ENCODER.encode(password);
-        User byUserName = userRepository.findByUserName(userName);
-        if(password.equals(byUserName.getPassword())){
+        User user = userRepository.findByUserName(userName);
+        boolean userPassword = PASSWORD_ENCODER.matches(password,user.getPassword());
+        if(userPassword){
             userRepository.deleteByUserName(userName);
             return true;
         }else{
             return false;
         }
     }
+
+    public boolean checkuser(String userName, String password) {
+        boolean loginState = false;
+        User checkUserExisist = userRepository.findByUserName(userName);
+        boolean userPassword = PASSWORD_ENCODER.matches(password,checkUserExisist.getPassword());
+        if(checkUserExisist.getUserName().equals(userName) && userPassword){
+            loginState = true;
+        }
+        return loginState;
+    }
+
+    public responceUser getInfo(String userName) {
+        User user = userRepository.findByUserName(userName);
+        responceUser demoUser = new responceUser();
+        if(user != null) {
+            demoUser.setUserName(user.getUserName());
+            demoUser.setId(user.getId());
+            demoUser.setGmailId(user.getGmailId());
+            demoUser.setProfilePhotoURL(user.getProfilePhotoURL());
+        }
+        return demoUser;
+    }
+
+
 }
