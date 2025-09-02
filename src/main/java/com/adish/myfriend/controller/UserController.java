@@ -1,7 +1,7 @@
 package com.adish.myfriend.controller;
 
 import com.adish.myfriend.Component.*;
-import com.adish.myfriend.entities.User;
+import com.adish.myfriend.service.CloudinaryImageService;
 import com.adish.myfriend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,12 +9,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CloudinaryImageService cloudinaryImageService;
+
+    @PostMapping("/image-upload")
+    public ResponseEntity<Map> uploadImage(@RequestParam("image") MultipartFile file){
+        Map data = cloudinaryImageService.uplaod(file);
+        if(!data.isEmpty()) {
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     @GetMapping("/user-info")
     public ResponseEntity<?> getUserInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UserPostService {
+
+    @Autowired
+    private CloudinaryImageService cloudinaryImageService;
 
     @Autowired
     private UserRepository userRepository;
@@ -35,6 +39,10 @@ public class UserPostService {
             }
             if((userPost.getTitle() != null) && !userPost.getTitle().isEmpty()) {
                 UserPost saved = userPostRepository.save(userPost);
+                if(user.getProductIds().isEmpty()){
+
+                }
+                user.getProductIds().add( userPost.getProductId());
                 user.getUserPostsList().add(saved);
                 userRepository.save(user);
                 checkSave = true;
@@ -67,7 +75,12 @@ public class UserPostService {
                         if(!userPost.getContent().equals(userExistingPost.getContent())){
                             userExistingPost.setContent(userPost.getContent());
                         }
+                        if(!userPost.getTitleColor().equals(userExistingPost.getTitleColor())){
+                            userExistingPost.setTitleColor(userPost.getTitleColor());
+                        }
                         if(!userPost.getPhotoURL().equals(userExistingPost.getPhotoURL())){
+                            cloudinaryImageService.deleteImage(userExistingPost.getProductId());
+                            userExistingPost.setProductId(userPost.getProductId());
                             userExistingPost.setPhotoURL(userPost.getPhotoURL());
                         }
                         userPostRepository.save(userExistingPost);
@@ -85,6 +98,8 @@ public class UserPostService {
             removed = user.getUserPostsList().removeIf(x -> x.getId().equals(postId));
             if (removed) {
                 userRepository.save(user);
+                Optional<UserPost> userPost = userPostRepository.findById(postId);
+                cloudinaryImageService.deleteImage(userPost.get().getProductId());
                 userPostRepository.deleteById(postId);
             }
         } catch (Exception e) {

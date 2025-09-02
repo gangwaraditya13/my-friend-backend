@@ -1,4 +1,4 @@
-package com.adish.myfriend.service;
+package com.adish.myfriend.service.impl;
 
 import com.adish.myfriend.entities.User;
 import com.adish.myfriend.repository.UserRepository;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class UserDetailServiceImp implements UserDetailsService {
+public class UserDetailServiceImp implements UserDetailsService{
 
     @Autowired
     private UserRepository userRepository;

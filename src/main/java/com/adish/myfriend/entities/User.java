@@ -27,6 +27,8 @@ public class User {
     @NonNull
     private String password;
     private String profilePhotoURL;
+    private String profileProductId;
+    private List<String> productIds = new ArrayList<>();
     private String gmailId;
     @DBRef
     private List<UserPost> userPostsList = new ArrayList<>();

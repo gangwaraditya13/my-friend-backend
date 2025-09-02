@@ -1,5 +1,6 @@
 package com.adish.myfriend.entities;
 
+import com.adish.myfriend.Component.TitleColor;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -22,8 +23,10 @@ public class UserPost {
     private ObjectId id;
     @NonNull
     private String title;
+    private TitleColor titleColor;
     private String content;
     private String photoURL;
     private String date;
+    private String productId;
 
 }

@@ -22,6 +22,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CloudinaryImageService cloudinaryImageService;
+
     private static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     @Transactional
@@ -60,8 +63,15 @@ public class UserService {
 
     public boolean updatePhotoURL(NewPhotoURL newPhotoURL, String userName){
         User existingUser = userRepository.findByUserName(userName);
-        if(newPhotoURL.getOldPhoto().isEmpty() || newPhotoURL.getOldPhoto() == null || !existingUser.getProfilePhotoURL().equals(newPhotoURL.getNewPhoto()) ){
-            existingUser.setProfilePhotoURL(newPhotoURL.getNewPhoto());
+        if(newPhotoURL.getOldPhoto() == null || newPhotoURL.getOldPhoto().isEmpty() || !existingUser.getProfilePhotoURL().equals(newPhotoURL.getNewPhoto()) ){
+            if(existingUser.getProfileProductId() == null || existingUser.getProfileProductId().isEmpty()) {
+                existingUser.setProfileProductId(newPhotoURL.getProductId());
+                existingUser.setProfilePhotoURL(newPhotoURL.getNewPhoto());
+            }else {
+                cloudinaryImageService.deleteImage(existingUser.getProfileProductId());
+                existingUser.setProfileProductId(newPhotoURL.getProductId());
+                existingUser.setProfilePhotoURL(newPhotoURL.getNewPhoto());
+            }
             userRepository.save(existingUser);
             return true;
         }
@@ -90,6 +100,9 @@ public class UserService {
         User user = userRepository.findByUserName(userName);
         boolean userPassword = PASSWORD_ENCODER.matches(password,user.getPassword());
         if(userPassword){
+            if(!user.getProductIds().isEmpty()){
+                cloudinaryImageService.deleteAllImages(user.getProductIds());
+            }
             userRepository.deleteByUserName(userName);
             return true;
         }else{

@@ -1,6 +1,6 @@
 package com.adish.myfriend.config;
 
-import com.adish.myfriend.service.UserDetailServiceImp;
+import com.adish.myfriend.service.impl.UserDetailServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,7 @@ public class SpringSecurity {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity Http) throws Exception {
         return Http.authorizeHttpRequests(request -> request
-                .requestMatchers("/public/**").permitAll()
+                .requestMatchers("/public/**","/cloudinary/upload/**").permitAll()
                 .requestMatchers("/user-post/**", "/user/**").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN"))
                 .httpBasic(Customizer.withDefaults())
