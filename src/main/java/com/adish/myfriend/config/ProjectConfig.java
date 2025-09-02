@@ -15,9 +15,9 @@ public class ProjectConfig {
 
         Map conifg = new HashMap();
 
-        conifg.put("cloud_name","dx3wtw7pf");
-        conifg.put("api_key","516676559777456");
-        conifg.put("api_secret","ghGgw_P7h63mBf7klON14-8hHGo");
+        conifg.put("cloud_name","YOUR_CLOUD_NAME");
+        conifg.put("api_key","YOUR_API_KEY");
+        conifg.put("api_secret","YOUR_API_SECRET");
         conifg.put("secure",true);
 
         return new Cloudinary(conifg);
