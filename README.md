@@ -1,5 +1,4 @@
 # My Friend Backend
-[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/gangwaraditya13/my-friend-backend)
 
 This repository contains the backend service for the "My Friend" application. It is a robust Spring Boot application that provides RESTful APIs for user management, authentication, post creation, and image handling with Cloudinary.
 
@@ -124,4 +123,5 @@ Requires `ADMIN` role for access.
 | `GET`    | `/admin/all-users`   | Retrieves a list of all registered users.  |
 | `PUT`    | `/admin/m-admin`     | Assigns a role (e.g., `ADMIN`) to a user.  |
 | `DELETE` | `/admin/remove-auth` | Removes a role from a user.                |
+
 
