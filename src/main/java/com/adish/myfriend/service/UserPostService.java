@@ -99,7 +99,9 @@ public class UserPostService {
             if (removed) {
                 userRepository.save(user);
                 Optional<UserPost> userPost = userPostRepository.findById(postId);
-                cloudinaryImageService.deleteImage(userPost.get().getProductId());
+                if(!userPost.get().getProductId().isEmpty()) {
+                    cloudinaryImageService.deleteImage(userPost.get().getProductId());
+                }
                 userPostRepository.deleteById(postId);
             }
         } catch (Exception e) {
