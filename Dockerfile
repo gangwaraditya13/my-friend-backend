@@ -1,5 +1,5 @@
 # ---- build stage ----
-FROM maven:3.9.3-eclipse-temurin-21 AS build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /build
 
 # copy pom first to leverage Docker cache
