@@ -3,6 +3,8 @@ package com.adish.myfriend.controller;
 import com.adish.myfriend.Component.*;
 import com.adish.myfriend.service.CloudinaryImageService;
 import com.adish.myfriend.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
+@SecurityRequirement(name = "basicAuth")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -22,6 +25,10 @@ public class UserController {
     @Autowired
     private CloudinaryImageService cloudinaryImageService;
 
+    @Operation(
+            summary = "Upload profile image",
+            description = "Uploads user profile image to Cloudinary"
+    )
     @PostMapping("/image-upload")
     public ResponseEntity<Map> uploadImage(@RequestParam("image") MultipartFile file){
         Map data = cloudinaryImageService.uplaod(file);

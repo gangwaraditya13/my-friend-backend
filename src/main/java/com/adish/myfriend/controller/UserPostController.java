@@ -2,6 +2,7 @@ package com.adish.myfriend.controller;
 
 import com.adish.myfriend.entities.UserPost;
 import com.adish.myfriend.service.UserPostService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@SecurityRequirement(name = "basicAuth")
 @Controller
 @RequestMapping("/user-post")
 public class UserPostController {

@@ -3,13 +3,14 @@ package com.adish.myfriend.controller;
 import com.adish.myfriend.Component.AdminRequest;
 import com.adish.myfriend.entities.User;
 import com.adish.myfriend.service.AdminService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@SecurityRequirement(name = "basicAuth")
 @RestController
 @RequestMapping("/admin")
 public class AdminController{
