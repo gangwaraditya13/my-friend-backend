@@ -22,10 +22,18 @@ public class SpringSecurity {
     @Autowired
     private UserDetailServiceImp userDetailServiceImp;
 
+    public static final String[] PUBLIC_URLS = {
+            "/public/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/cloudinary/upload/**"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity Http) throws Exception {
         return Http.authorizeHttpRequests(request -> request
-                .requestMatchers("/public/**","/cloudinary/upload/**").permitAll()
+                .requestMatchers(PUBLIC_URLS).permitAll()
                 .requestMatchers("/user-post/**", "/user/**").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN"))
                 .httpBasic(Customizer.withDefaults())
